@@ -14,7 +14,7 @@
 
         Dim KeyProgram As String = ""
         Dim KeyLineProgram As String = ""
-        Dim NowSecond As Long = Now.Ticks \ 10000000
+        Dim BeginTimeSecond As Long = timeKeyBeginTime.Value.Ticks \ 10000000
 
         Dim KeyTime As Integer = (timeKeyStopTime.Value - timeKeyBeginTime.Value).TotalMinutes
 
@@ -34,7 +34,7 @@
                 gencode(KeyTime, KeyStr, KeyBin)
                 KeyProgram += "{" + KeyStr + "}" + Chr(13)
             ElseIf Trim(KeyLineProgram) = "Private beginTime As Long = 0" Then
-                KeyProgram += "Private beginTime As Long = " + (NowSecond \ 60).ToString + Chr(13)
+                KeyProgram += "Private beginTime As Long = " + (BeginTimeSecond \ 60).ToString + Chr(13)
             Else
                 KeyProgram += KeyLineProgram + Chr(13)
             End If
@@ -46,7 +46,7 @@
         FilePut(2, KeyProgram)
         FileClose(2)
 
-        Dim SecureKeyPath As String = CurrentPath + "\export\" + NowSecond.ToString
+        Dim SecureKeyPath As String = CurrentPath + "\export\" + BeginTimeSecond.ToString
         If Dir(SecureKeyPath, vbDirectory) = "" Then MkDir(SecureKeyPath)
 
         Dim KeyExeFileName As String = CurrentPath + "\Key\Key\bin\Release\Key.exe"
@@ -60,7 +60,7 @@
         Dim SecureKeyFileName As String = SecureKeyPath + "\Key"
         If Dir(SecureKeyFileName) <> "" Then Kill(SecureKeyFileName)
         FileOpen(3, SecureKeyFileName, OpenMode.Binary)
-        FilePut(3, BitConverter.GetBytes(NowSecond - 62135625600))    '1970-01-01的总秒数 + 8小时秒数 = 62135625600
+        FilePut(3, BitConverter.GetBytes(BeginTimeSecond - 62135625600))    '1970-01-01的总秒数 + 8小时秒数 = 62135625600
         FilePut(3, KeyBin)
         FileClose(3)
 
