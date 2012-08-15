@@ -31,11 +31,12 @@ Partial Class main
         Me.textDevenvPath = New System.Windows.Forms.TextBox()
         Me.cancel = New System.Windows.Forms.Button()
         Me.fileDevenvPath = New System.Windows.Forms.OpenFileDialog()
+        Me.loading = New System.Windows.Forms.ProgressBar()
         Me.SuspendLayout()
         '
         'generate
         '
-        Me.generate.Location = New System.Drawing.Point(63, 145)
+        Me.generate.Location = New System.Drawing.Point(63, 129)
         Me.generate.Name = "generate"
         Me.generate.Size = New System.Drawing.Size(75, 23)
         Me.generate.TabIndex = 0
@@ -95,7 +96,7 @@ Partial Class main
         '
         'cancel
         '
-        Me.cancel.Location = New System.Drawing.Point(158, 145)
+        Me.cancel.Location = New System.Drawing.Point(158, 129)
         Me.cancel.Name = "cancel"
         Me.cancel.Size = New System.Drawing.Size(75, 23)
         Me.cancel.TabIndex = 7
@@ -107,11 +108,20 @@ Partial Class main
         Me.fileDevenvPath.FileName = "devenv.exe"
         Me.fileDevenvPath.Filter = "(devenv.exe)|devenv.exe"
         '
+        'loading
+        '
+        Me.loading.Location = New System.Drawing.Point(15, 129)
+        Me.loading.Name = "loading"
+        Me.loading.Size = New System.Drawing.Size(268, 23)
+        Me.loading.TabIndex = 8
+        Me.loading.Visible = False
+        '
         'main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(298, 194)
+        Me.ClientSize = New System.Drawing.Size(298, 165)
+        Me.Controls.Add(Me.loading)
         Me.Controls.Add(Me.cancel)
         Me.Controls.Add(Me.textDevenvPath)
         Me.Controls.Add(Me.labelDevenvPath)
@@ -137,5 +147,6 @@ Partial Class main
     Friend WithEvents textDevenvPath As System.Windows.Forms.TextBox
     Friend WithEvents cancel As System.Windows.Forms.Button
     Friend WithEvents fileDevenvPath As System.Windows.Forms.OpenFileDialog
+    Friend WithEvents loading As System.Windows.Forms.ProgressBar
 
 End Class

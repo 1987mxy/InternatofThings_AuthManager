@@ -11,7 +11,7 @@
             MessageBox.Show("请选择正确的devenv.exe文件")
             Exit Sub
         End If
-        FileOpen(1, _KeyProgramFileName, OpenMode.Input)
+
         Dim KeyProgram As String = ""
         Dim KeyLineProgram As String = ""
         Dim NowSecond As Long = Now.Ticks \ 10000000
@@ -20,6 +20,13 @@
 
         Dim KeyStr As String = ""
         Dim KeyBin(KeyTime * 3 - 1) As Byte
+
+        generate.Visible = False
+        cancel.Visible = False
+        loading.Maximum = KeyTime
+        loading.Visible = True
+
+        FileOpen(1, _KeyProgramFileName, OpenMode.Input)
 
         While Not EOF(1)
             KeyLineProgram = LineInput(1)
@@ -89,7 +96,7 @@
     '        codeLineLib((i Mod lineUnitNum)) = (myRnd.Next() Mod 1000000).ToString
     '        If (i Mod lineUnitNum) = (lineUnitNum - 1) Then
     '            codeLib(j) = Join(codeLineLib, ",") + " _" + Chr(13)
-    '            ReDim codeLineLib(lineUnitNum - 1)
+    '            ReDim codeLineLib(9360)
     '            j += 1
     '        ElseIf i = unitNum Then
     '            Dim endCodeLine As String = ""
@@ -106,17 +113,37 @@
     'End Function
 
     Private Sub gencode(ByVal KeyTime As Integer, ByRef KeyStr As String, ByRef KeyBin() As Byte)
-        Dim KeylibStr(KeyTime - 1) As String
+        Dim lineUnitNum As Integer = 9361   '(65535 - 2) \ 7
+        Dim lineNum As Integer = Math.Ceiling(KeyTime / lineUnitNum)
+        Dim KeyLibStr(lineNum - 1) As String
+        Dim KeyLineLib(9360) As String     '9361-1
+
         Dim KeylibBin = New List(Of Byte)
         Dim tempKey As Integer
 
         Dim myrnd As Random = New Random
         Randomize(Now.Ticks)
 
+        Dim j As Integer = 0
         For i As Integer = 0 To KeyTime - 1 Step 1
             tempKey = myrnd.Next() Mod 1000000
-            KeylibStr(i) = tempKey.ToString
+            KeyLineLib((i Mod lineUnitNum)) = tempKey
+            If (i Mod lineUnitNum) = (lineUnitNum - 1) Then
+                KeyLibStr(j) = Join(KeyLineLib, ",") + " _" + Chr(13)
+                ReDim KeyLineLib(9360)
+                j += 1
+            ElseIf i = KeyTime - 1 Then
+                Dim endCodeLine As String = ""
+                For Each theCode As String In KeyLineLib
+                    If theCode = "" Then
+                        Exit For
+                    End If
+                    endCodeLine += "," + theCode
+                Next
+                KeyLibStr(j) = Mid(endCodeLine, 2)
+            End If
             KeylibBin.AddRange(BitConverter.GetBytes(tempKey))
+            loading.Value += 1
         Next
 
         KeyStr = Join(KeylibStr, ",")
@@ -130,7 +157,7 @@
         End With
         With timeKeyStopTime
             .MinDate = Today.AddDays(1)
-            .MaxDate = Today.AddYears(5)
+            .MaxDate = Today.AddYears(2)
             .Value = Today.AddDays(1)
         End With
     End Sub
